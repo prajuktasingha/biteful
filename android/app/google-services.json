@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "196324596020",
+    "project_id": "biteful-45e01",
+    "storage_bucket": "biteful-45e01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196324596020:android:1571028dab4bebe1ed6d61",
+        "android_client_info": {
+          "package_name": "com.example.biteful"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3YqatyEtcaLyDQP4tCtY4K130uYnHMWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
