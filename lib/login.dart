@@ -46,6 +46,9 @@ class Login extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 131, 171, 239),
+                ),
                 onPressed: () async {
                   try {
                     await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -67,10 +70,16 @@ class Login extends StatelessWidget {
                     }
                   }
                 },
-                child: const Text("Login"),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
 
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 131, 171, 239),
+                ),
                 onPressed: () async {
                   try {
                     await FirebaseAuth.instance.sendPasswordResetEmail(
@@ -102,7 +111,10 @@ class Login extends StatelessWidget {
                     }
                   }
                 },
-                child: const Text("Forgot Password?"),
+                child: const Text(
+                  "Forgot Password?",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

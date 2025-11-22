@@ -3,13 +3,14 @@ import 'package:biteful/login.dart';
 import 'package:biteful/signin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero).then((_) {
+    Future.delayed(Duration(milliseconds: 500)).then((_) {
       if (FirebaseAuth.instance.currentUser != null) {
         Navigator.pushReplacement(
           context,
@@ -25,24 +26,31 @@ class SplashScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(),
-            Center(child: Image.asset('images/cooking.jpg', height: 250)),
+            Center(
+              child: Image.network(
+                "https://img.freepik.com/premium-vector/human-daily-activity-concept-vector-illustration_1287274-43737.jpg",
+                height: 300,
+                width: double.infinity,
+              ),
+            ),
             const SizedBox(height: 24),
             const Text(
               'UNLIMITED PREMIUM RECIPES',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.deepOrange,
+                color: Color.fromARGB(255, 8, 90, 156),
                 letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Your next cooking\ndestination',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+            Text(
+              "Your next cooking\n    destination",
+              style: GoogleFonts.jost(
+                textStyle: const TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 209, 90, 130),
+                ),
               ),
             ),
             const Spacer(),

@@ -1,4 +1,3 @@
-import 'package:biteful/steps.dart';
 import 'package:flutter/material.dart';
 
 class RecipeDetails extends StatelessWidget {
@@ -8,7 +7,11 @@ class RecipeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final steps = recipe['steps'] as List<dynamic>? ?? [];
+    final ingredients = recipe['Ingredients'] as List<dynamic>? ?? [];
+    final steps = recipe['Steps'] as List<dynamic>? ?? [];
+
+    final ingredientColor = const Color(0xFFFFF3E0);
+    final stepColor = const Color(0xFFFFF3E0);
 
     return Scaffold(
       appBar: AppBar(title: Text(recipe['name'] ?? 'Recipe')),
@@ -23,7 +26,6 @@ class RecipeDetails extends StatelessWidget {
                 child: Image.network(
                   recipe['image'],
                   height: 200,
-
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -32,7 +34,11 @@ class RecipeDetails extends StatelessWidget {
 
             Text(
               recipe['name'] ?? 'Recipe',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 199, 70, 60),
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -49,7 +55,7 @@ class RecipeDetails extends StatelessWidget {
                 Column(
                   children: [
                     const Icon(Icons.list_alt),
-                    Text('${recipe['Ingredients'].length} Steps'),
+                    Text('${steps.length} Steps'),
                   ],
                 ),
                 Column(
@@ -61,29 +67,49 @@ class RecipeDetails extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             const Text(
-              'Steps',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'Ingredients',
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 126, 104, 163),
+              ),
             ),
 
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: recipe['Steps'].length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: ingredients.length,
               itemBuilder: (context, index) {
-                final String item = recipe['Steps'][index];
+                final String item = ingredients[index];
                 return Card(
-                  color: Colors.white,
+                  color: ingredientColor,
+                  elevation: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(child: Text("${index + 1}")),
-                        SizedBox(width: 8),
-                        Expanded(child: Text(item)),
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Colors.orange,
+                          child: Text(
+                            "${index + 1}",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            item,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -91,28 +117,49 @@ class RecipeDetails extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             const Text(
-              'Ingredients',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'Steps',
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(255, 126, 104, 163),
+              ),
             ),
+
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: recipe['Ingredients'].length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: steps.length,
               itemBuilder: (context, index) {
-                final String item = recipe['Ingredients'][index];
+                final String step = steps[index];
                 return Card(
-                  color: Colors.white,
+                  color: stepColor,
+                  elevation: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(child: Text("${index + 1}")),
-                        SizedBox(width: 8),
-                        Expanded(child: Text(item)),
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Colors.orange,
+                          child: Text(
+                            "${index + 1}",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            step,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ],
                     ),
                   ),

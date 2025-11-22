@@ -1,9 +1,12 @@
-import 'dart:math';
-
 import 'package:biteful/recipe_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+final ValueNotifier<String> searchQuery = ValueNotifier<String>("");
+final ValueNotifier<String> selectedCategory = ValueNotifier<String>("All");
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,7 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(254, 255, 253, 1),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -20,28 +23,55 @@ class HomePage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('images/profile.jpg'),
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'logout') {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacementNamed(context, '/');
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'logout',
+                            child: Text('Logout'),
+                          ),
+                        ],
+                    child: const CircleAvatar(
+                      radius: 20,
+                      backgroundImage: AssetImage('images/profile.jpg'),
+                    ),
                   ),
-                  SizedBox(width: 8),
-                  Text(
+                  const SizedBox(width: 8),
+                  const Text(
                     "Hi, User!",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 12),
               Text(
                 "What do you want to cook today?",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: GoogleFonts.oswald(
+                  textStyle: const TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
               ),
-              SizedBox(height: 16),
-
+              const SizedBox(height: 16),
               TextField(
+                onChanged: (value) {
+                  searchQuery.value = value.toLowerCase();
+                },
                 decoration: InputDecoration(
                   hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -49,67 +79,87 @@ class HomePage extends StatelessWidget {
                   fillColor: Colors.white,
                 ),
               ),
-              SizedBox(height: 16),
-
+              const SizedBox(height: 16),
               SizedBox(
                 height: 40,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    CategoryChip(label: 'All', selected: true),
-                    CategoryChip(label: 'Meat'),
-                    CategoryChip(label: 'Noodles'),
-                    CategoryChip(label: 'Vegetables'),
+                  children: const [
+                    CategoryChip(label: 'All'),
+                    CategoryChip(label: 'Veg'),
+                    CategoryChip(label: 'Non-veg'),
+                    CategoryChip(label: 'Desserts & Beverages'),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children: const [
                   Text(
                     'Popular Recipe',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
                   ),
                   Text(
                     'See All',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.green,
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
-
+              const SizedBox(height: 16),
               Expanded(
-                child: FirestoreListView(
-                  query: FirebaseFirestore.instance.collection("recepies"),
-                  itemBuilder: (context, doc) {
-                    final Map<String, dynamic> recipe = doc.data();
-
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RecipeDetails(recipe: recipe),
+                child: ValueListenableBuilder<String>(
+                  valueListenable: selectedCategory,
+                  builder: (context, categoryValue, _) {
+                    return ValueListenableBuilder<String>(
+                      valueListenable: searchQuery,
+                      builder: (context, searchValue, _) {
+                        return FirestoreListView(
+                          query: FirebaseFirestore.instance.collection(
+                            "recepies",
                           ),
+                          itemBuilder: (context, doc) {
+                            final Map<String, dynamic> recipe = doc.data();
+                            if (searchValue.isNotEmpty &&
+                                !recipe['name']
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains(searchValue)) {
+                              return const SizedBox.shrink();
+                            }
+                            if (categoryValue != "All" &&
+                                recipe['category'].toString().toLowerCase() !=
+                                    categoryValue.toLowerCase()) {
+                              return const SizedBox.shrink();
+                            }
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecipeDetails(recipe: recipe),
+                                  ),
+                                );
+                              },
+                              child: RecipeCard(
+                                title: recipe['name'],
+                                time: recipe['prep_time'],
+                                image: recipe['image'],
+                                color: const Color.fromARGB(255, 235, 217, 235),
+                              ),
+                            );
+                          },
                         );
                       },
-                      child: RecipeCard(
-                        title: recipe['name'],
-                        time: recipe['prep_time'],
-                        image: recipe['image'],
-                        color: [
-                          Colors.yellow.shade100,
-                          Colors.orange.shade100,
-                          Colors.blue.shade100,
-                          Colors.green.shade100,
-                        ][Random().nextInt(4)],
-                      ),
                     );
                   },
                 ),
@@ -124,26 +174,30 @@ class HomePage extends StatelessWidget {
 
 class CategoryChip extends StatelessWidget {
   final String label;
-  final bool selected;
-
-  const CategoryChip({Key? key, required this.label, this.selected = false})
-    : super(key: key);
+  const CategoryChip({Key? key, required this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-        selectedColor: Colors.green,
-        backgroundColor: Colors.green.shade100,
-        labelStyle: TextStyle(
-          color: selected ? Colors.white : Colors.black87,
-          fontWeight: FontWeight.w500,
-        ),
-        onSelected: (_) {},
-      ),
+    return ValueListenableBuilder<String>(
+      valueListenable: selectedCategory,
+      builder: (context, selected, _) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: ChoiceChip(
+            label: Text(label),
+            selected: selected == label,
+            selectedColor: const Color.fromARGB(255, 232, 113, 113),
+            backgroundColor: const Color.fromARGB(255, 236, 190, 190),
+            labelStyle: TextStyle(
+              color: selected == label ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+            onSelected: (_) {
+              selectedCategory.value = label;
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -175,9 +229,9 @@ class RecipeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           child: Image.network(image, fit: BoxFit.cover, height: 50, width: 50),
         ),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('$time'),
-        trailing: Icon(Icons.arrow_forward_ios),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(time),
+        trailing: const Icon(Icons.arrow_forward_ios),
       ),
     );
   }

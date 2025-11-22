@@ -41,7 +41,7 @@ class SignIn extends StatelessWidget {
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(
-                  labelText: "Enter Registered Email",
+                  labelText: "Enter your email",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -56,6 +56,9 @@ class SignIn extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 102, 163, 223),
+                ),
                 onPressed: () async {
                   try {
                     await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -78,7 +81,10 @@ class SignIn extends StatelessWidget {
                     }
                   }
                 },
-                child: const Text("Sign Up"),
+                child: const Text(
+                  "Sign Up",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

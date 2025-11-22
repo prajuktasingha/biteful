@@ -18,7 +18,7 @@ class Reset extends StatelessWidget {
             children: [
               const SizedBox(height: 40),
               Image.network(
-                'https://static.vecteezy.com/system/resources/previews/011/634/326/non_2x/cooking-and-kitchen-illustration-concept-on-white-background-free-vector.jpg',
+                'https://media.istockphoto.com/id/1500914761/vector/fitness-health-gym-trendy-icons-on-circles.jpg?s=612x612&w=0&k=20&c=MaSBJ-edgZ2Nm7utjZgYupCWAzhrcIek0Udz48L_JME=',
                 height: 250,
                 width: 300,
               ),
@@ -57,9 +57,7 @@ class Reset extends StatelessWidget {
 
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => Login(),
-                          ), // login page
+                          MaterialPageRoute(builder: (context) => Login()),
                         );
                       }
                     } on FirebaseAuthException catch (e) {
